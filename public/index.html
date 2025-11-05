@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Quiz Game</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen" class="screen active">
+      <div class="welcome-content">
+        <h1 class="game-title">🎮 Quiz Master</h1>
+        <p class="game-subtitle">Real-Time Multiplayer Quiz Game</p>
+
+        <div class="welcome-form">
+          <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="20" />
+
+          <div class="button-group">
+            <button id="createGameBtn" class="btn btn-primary">Create New Game</button>
+            <button id="joinGameBtn" class="btn btn-secondary">Join Game</button>
+          </div>
+        </div>
+
+        <div id="joinGameForm" class="join-form hidden">
+          <input type="text" id="gameIdInput" placeholder="Enter Game ID" maxlength="6" />
+          <button id="joinGameSubmitBtn" class="btn btn-primary">Join</button>
+          <button id="cancelJoinBtn" class="btn btn-secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lobby Screen -->
+    <div id="lobbyScreen" class="screen">
+      <div class="lobby-content">
+        <h2>Game Lobby</h2>
+        <div class="game-info">
+          <p>Game ID: <span id="gameIdDisplay" class="game-id-badge"></span></p>
+          <p>Players: <span id="playerCount">0</span></p>
+        </div>
+
+        <div class="players-list">
+          <h3>Players in Lobby:</h3>
+          <ul id="playersList"></ul>
+        </div>
+
+        <div class="lobby-actions">
+          <button id="startGameBtn" class="btn btn-primary" style="display: none;">Start Game</button>
+          <button id="leaveLobbyBtn" class="btn btn-secondary">Leave Lobby</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="screen">
+      <div class="game-header">
+        <div class="question-progress">
+          <span id="questionNumber">1</span>/<span id="totalQuestions">10</span>
+        </div>
+        <div class="timer-container">
+          <div id="timerBar" class="timer-bar"></div>
+          <span id="timerText" class="timer-text">15s</span>
+        </div>
+        <div class="player-score">
+          Score: <span id="playerScore">0</span>
+        </div>
+      </div>
+
+      <div class="question-container">
+        <div class="question-meta">
+          <span id="questionCategory" class="category-badge"></span>
+          <span id="questionDifficulty" class="difficulty-badge"></span>
+          <span id="questionPoints" class="points-badge"></span>
+        </div>
+        <h2 id="questionText" class="question-text"></h2>
+        <div id="optionsContainer" class="options-container"></div>
+        <div id="feedbackMessage" class="feedback-message"></div>
+      </div>
+
+      <div class="mini-leaderboard">
+        <h3>Live Leaderboard</h3>
+        <div id="miniLeaderboard"></div>
+      </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="resultsScreen" class="screen">
+      <div class="results-content">
+        <h1 class="results-title">🏆 Game Over!</h1>
+
+        <div id="winnerAnnouncement" class="winner-announcement"></div>
+
+        <div class="final-leaderboard">
+          <h2>Final Leaderboard</h2>
+          <div id="finalLeaderboard"></div>
+        </div>
+
+        <button id="playAgainBtn" class="btn btn-primary">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Socket.io Client -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
