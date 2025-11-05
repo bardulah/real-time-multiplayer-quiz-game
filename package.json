@@ -1,0 +1,26 @@
+{
+  "name": "real-time-multiplayer-quiz-game",
+  "version": "1.0.0",
+  "description": "Competitive real-time quiz game with multiplayer support, live scoring, and leaderboards",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "keywords": [
+    "quiz",
+    "multiplayer",
+    "real-time",
+    "socket.io",
+    "game"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
