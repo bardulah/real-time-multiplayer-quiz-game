@@ -541,4 +541,494 @@ body {
   .lobby-actions {
     flex-direction: column;
   }
+
+  .game-layout {
+    flex-direction: column;
+  }
+
+  .game-sidebar {
+    width: 100%;
+  }
+
+  .avatar-grid {
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  }
+
+  .lobby-container {
+    flex-direction: column;
+  }
+
+  .chat-section {
+    width: 100%;
+  }
+}
+
+/* Sound Toggle Button */
+.sound-toggle, .stats-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  font-size: 1.5em;
+  transition: all 0.3s;
+  z-index: 1000;
+}
+
+.stats-toggle {
+  right: 80px;
+}
+
+.sound-toggle:hover, .stats-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.sound-toggle.muted {
+  opacity: 0.5;
+}
+
+/* Avatar Selection */
+.avatar-selection {
+  margin: 25px 0;
+  text-align: left;
+}
+
+.avatar-selection label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #333;
+}
+
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.avatar-option {
+  width: 60px;
+  height: 60px;
+  font-size: 2em;
+  border: 3px solid #e0e0e0;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-option:hover {
+  border-color: #667eea;
+  transform: scale(1.1);
+}
+
+.avatar-option.selected {
+  border-color: #667eea;
+  background: #f0f4ff;
+  transform: scale(1.15);
+}
+
+/* Game Settings */
+.game-settings {
+  margin: 25px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.game-settings h3 {
+  margin-bottom: 15px;
+  color: #667eea;
+}
+
+.settings-group {
+  margin-bottom: 15px;
+}
+
+.settings-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #333;
+}
+
+.settings-group select {
+  width: 100%;
+  padding: 10px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1em;
+  font-family: 'Poppins', sans-serif;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.settings-group select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.game-settings-display {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* Lobby Layout */
+.lobby-container {
+  display: flex;
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.players-section {
+  flex: 1;
+}
+
+.chat-section {
+  flex: 1;
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+/* Chat Interface */
+.chat-messages {
+  height: 300px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 2px solid #e0e0e0;
+}
+
+.chat-message {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: #f0f4ff;
+  border-radius: 8px;
+  animation: slideInMessage 0.3s ease-out;
+}
+
+@keyframes slideInMessage {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-message-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+  font-size: 0.85em;
+  color: #666;
+}
+
+.chat-message-avatar {
+  font-size: 1.2em;
+}
+
+.chat-message-name {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.chat-message-time {
+  margin-left: auto;
+  font-size: 0.85em;
+}
+
+.chat-message-text {
+  color: #333;
+  word-wrap: break-word;
+}
+
+.chat-input-container {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input-container input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95em;
+}
+
+.chat-input-container input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.btn-small {
+  padding: 10px 20px;
+  font-size: 0.95em;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #667eea;
+  color: white;
+  transition: all 0.3s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.btn-small:hover {
+  background: #5568d3;
+}
+
+/* Game Layout with Chat */
+.game-layout {
+  display: flex;
+  gap: 20px;
+}
+
+.game-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.game-sidebar {
+  width: 300px;
+}
+
+.chat-panel {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+
+.chat-panel h3 {
+  color: #667eea;
+  margin-bottom: 15px;
+}
+
+.chat-panel .chat-messages {
+  height: calc(100vh - 400px);
+  min-height: 300px;
+}
+
+/* Statistics Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  animation: fadeIn 0.3s ease-in;
+}
+
+.modal.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 2em;
+  font-weight: 300;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.stats-content {
+  margin-top: 20px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border-left: 4px solid #667eea;
+}
+
+.stat-label {
+  font-weight: 600;
+  color: #333;
+}
+
+.stat-value {
+  font-weight: 700;
+  color: #667eea;
+  font-size: 1.2em;
+}
+
+.stat-section {
+  margin-bottom: 30px;
+}
+
+.stat-section h3 {
+  color: #667eea;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.player-stats-display {
+  margin: 30px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 15px;
+}
+
+.player-stats-display h3 {
+  color: #667eea;
+  margin-bottom: 15px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.stat-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card-value {
+  font-size: 2em;
+  font-weight: 700;
+  color: #667eea;
+  margin-bottom: 5px;
+}
+
+.stat-card-label {
+  font-size: 0.9em;
+  color: #666;
+}
+
+/* Enhanced Leaderboard with Avatars */
+.leaderboard-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: transform 0.3s;
+}
+
+.leaderboard-item:hover {
+  transform: translateX(5px);
+}
+
+.leaderboard-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.leaderboard-avatar {
+  font-size: 1.5em;
+}
+
+.leaderboard-rank {
+  font-weight: 700;
+  font-size: 1.2em;
+  width: 30px;
+}
+
+.leaderboard-rank.first { color: #ffd700; }
+.leaderboard-rank.second { color: #c0c0c0; }
+.leaderboard-rank.third { color: #cd7f32; }
+
+.leaderboard-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.leaderboard-score {
+  font-weight: 700;
+  color: #667eea;
+  font-size: 1.1em;
+}
+
+/* Enhanced Player List with Avatars */
+.players-list li {
+  background: #f8f9fa;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.players-list li::before {
+  content: none;
+}
+
+.player-avatar {
+  font-size: 1.5em;
+}
+
+.player-name {
+  flex: 1;
+  font-weight: 500;
 }
