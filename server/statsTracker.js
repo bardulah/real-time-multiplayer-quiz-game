@@ -1,13 +1,23 @@
 // Statistics tracker for player performance
+// Now with database persistence!
+const GameDatabase = require('./database');
+
 class StatsTracker {
   constructor() {
-    this.playerStats = new Map(); // playerId -> stats object
+    // Initialize database connection
+    this.db = new GameDatabase();
+    this.db.init();
+    console.log('✓ StatsTracker initialized with database persistence');
   }
 
   // Get or create player stats
   getPlayerStats(playerId, playerName) {
-    if (!this.playerStats.has(playerId)) {
-      this.playerStats.set(playerId, {
+    try {
+      return this.db.getPlayerStats(playerId, playerName);
+    } catch (error) {
+      console.error('Error getting player stats:', error);
+      // Return default stats if database fails (graceful degradation)
+      return {
         playerId: playerId,
         playerName: playerName,
         totalGames: 0,
@@ -23,99 +33,77 @@ class StatsTracker {
         categoriesPlayed: {},
         difficultiesPlayed: {},
         gamesHistory: []
-      });
+      };
     }
-    return this.playerStats.get(playerId);
   }
 
   // Update stats after a game
   updateGameStats(playerId, playerName, gameResult) {
-    const stats = this.getPlayerStats(playerId, playerName);
-
-    stats.totalGames++;
-    stats.totalScore += gameResult.score;
-    stats.totalCorrectAnswers += gameResult.correctAnswers;
-    stats.totalQuestions += gameResult.totalQuestions;
-
-    // Update best score
-    if (gameResult.score > stats.bestScore) {
-      stats.bestScore = gameResult.score;
+    try {
+      // Database now handles all the logic!
+      return this.db.updatePlayerStats(playerId, playerName, gameResult);
+    } catch (error) {
+      console.error('Error updating player stats:', error);
+      // Return current stats if update fails
+      return this.getPlayerStats(playerId, playerName);
     }
-
-    // Update win count
-    if (gameResult.isWinner) {
-      stats.wins++;
-    }
-
-    // Calculate averages
-    stats.averageScore = Math.round(stats.totalScore / stats.totalGames);
-    stats.winRate = Math.round((stats.wins / stats.totalGames) * 100);
-    stats.accuracy = Math.round((stats.totalCorrectAnswers / stats.totalQuestions) * 100);
-
-    // Update fastest answer
-    if (gameResult.fastestAnswer) {
-      if (!stats.fastestAnswer || gameResult.fastestAnswer < stats.fastestAnswer) {
-        stats.fastestAnswer = gameResult.fastestAnswer;
-      }
-    }
-
-    // Track categories played
-    if (gameResult.category) {
-      stats.categoriesPlayed[gameResult.category] =
-        (stats.categoriesPlayed[gameResult.category] || 0) + 1;
-    }
-
-    // Track difficulties played
-    if (gameResult.difficulty) {
-      stats.difficultiesPlayed[gameResult.difficulty] =
-        (stats.difficultiesPlayed[gameResult.difficulty] || 0) + 1;
-    }
-
-    // Add to games history (keep last 10 games)
-    stats.gamesHistory.unshift({
-      date: new Date().toISOString(),
-      score: gameResult.score,
-      rank: gameResult.rank,
-      correctAnswers: gameResult.correctAnswers,
-      totalQuestions: gameResult.totalQuestions,
-      category: gameResult.category,
-      difficulty: gameResult.difficulty
-    });
-
-    if (stats.gamesHistory.length > 10) {
-      stats.gamesHistory = stats.gamesHistory.slice(0, 10);
-    }
-
-    return stats;
   }
 
   // Get all player stats (for leaderboards)
   getAllStats() {
-    return Array.from(this.playerStats.values());
+    // This could be slow for many players, but works for now
+    // In future, could add a database method for this
+    return this.getTopPlayers('totalScore', 1000);
   }
 
   // Get top players by various metrics
   getTopPlayers(metric = 'totalScore', limit = 10) {
-    const stats = this.getAllStats();
+    try {
+      // Get top players from database directly
+      const query = this.getTopPlayersQuery(metric, limit);
+      const rows = this.db.db.prepare(query).all(limit);
 
-    stats.sort((a, b) => {
-      switch (metric) {
-        case 'wins':
-          return b.wins - a.wins;
-        case 'winRate':
-          return b.winRate - a.winRate;
-        case 'bestScore':
-          return b.bestScore - a.bestScore;
-        case 'accuracy':
-          return b.accuracy - a.accuracy;
-        case 'totalGames':
-          return b.totalGames - a.totalGames;
-        default:
-          return b.totalScore - a.totalScore;
-      }
-    });
+      return rows.map(row => ({
+        playerId: row.player_id,
+        playerName: row.name,
+        totalGames: row.total_games,
+        wins: row.wins,
+        totalScore: row.total_score,
+        totalCorrectAnswers: row.total_correct_answers,
+        totalQuestions: row.total_questions,
+        bestScore: row.best_score,
+        averageScore: row.average_score,
+        winRate: row.win_rate,
+        accuracy: row.accuracy,
+        fastestAnswer: row.fastest_answer,
+        categoriesPlayed: JSON.parse(row.categories_played),
+        difficultiesPlayed: JSON.parse(row.difficulties_played)
+      }));
+    } catch (error) {
+      console.error('Error getting top players:', error);
+      return [];
+    }
+  }
 
-    return stats.slice(0, limit);
+  // Helper to get the right SQL query for different metrics
+  getTopPlayersQuery(metric, limit) {
+    const metricColumn = {
+      'wins': 'wins',
+      'winRate': 'win_rate',
+      'bestScore': 'best_score',
+      'accuracy': 'accuracy',
+      'totalGames': 'total_games',
+      'totalScore': 'total_score'
+    }[metric] || 'total_score';
+
+    return `
+      SELECT ps.*, p.name
+      FROM player_stats ps
+      JOIN players p ON p.id = ps.player_id
+      WHERE ps.total_games > 0
+      ORDER BY ps.${metricColumn} DESC
+      LIMIT ?
+    `;
   }
 
   // Calculate game result from game data

@@ -1,8 +1,11 @@
 // Question database with various categories and difficulty levels
-const questions = [
+// Now with database persistence!
+const GameDatabase = require('./database');
+
+// Default questions to seed the database
+const defaultQuestions = [
   // Science Questions
   {
-    id: 1,
     question: "What is the chemical symbol for gold?",
     options: ["Au", "Ag", "Fe", "Cu"],
     correctAnswer: 0,
@@ -11,7 +14,6 @@ const questions = [
     points: 100
   },
   {
-    id: 2,
     question: "What planet is known as the Red Planet?",
     options: ["Venus", "Mars", "Jupiter", "Saturn"],
     correctAnswer: 1,
@@ -20,7 +22,6 @@ const questions = [
     points: 100
   },
   {
-    id: 3,
     question: "What is the speed of light in vacuum?",
     options: ["299,792 km/s", "150,000 km/s", "400,000 km/s", "250,000 km/s"],
     correctAnswer: 0,
@@ -29,7 +30,6 @@ const questions = [
     points: 200
   },
   {
-    id: 4,
     question: "What is the powerhouse of the cell?",
     options: ["Nucleus", "Ribosome", "Mitochondria", "Chloroplast"],
     correctAnswer: 2,
@@ -38,7 +38,6 @@ const questions = [
     points: 100
   },
   {
-    id: 5,
     question: "What is the atomic number of Carbon?",
     options: ["6", "12", "8", "14"],
     correctAnswer: 0,
@@ -49,7 +48,6 @@ const questions = [
 
   // Geography Questions
   {
-    id: 6,
     question: "What is the capital of France?",
     options: ["London", "Berlin", "Paris", "Madrid"],
     correctAnswer: 2,
@@ -58,7 +56,6 @@ const questions = [
     points: 100
   },
   {
-    id: 7,
     question: "Which is the largest ocean on Earth?",
     options: ["Atlantic", "Indian", "Arctic", "Pacific"],
     correctAnswer: 3,
@@ -67,7 +64,6 @@ const questions = [
     points: 100
   },
   {
-    id: 8,
     question: "What is the longest river in the world?",
     options: ["Amazon", "Nile", "Mississippi", "Yangtze"],
     correctAnswer: 1,
@@ -76,7 +72,6 @@ const questions = [
     points: 200
   },
   {
-    id: 9,
     question: "How many continents are there?",
     options: ["5", "6", "7", "8"],
     correctAnswer: 2,
@@ -85,7 +80,6 @@ const questions = [
     points: 100
   },
   {
-    id: 10,
     question: "What is the smallest country in the world?",
     options: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"],
     correctAnswer: 1,
@@ -96,7 +90,6 @@ const questions = [
 
   // History Questions
   {
-    id: 11,
     question: "In what year did World War II end?",
     options: ["1943", "1944", "1945", "1946"],
     correctAnswer: 2,
@@ -105,7 +98,6 @@ const questions = [
     points: 100
   },
   {
-    id: 12,
     question: "Who was the first president of the United States?",
     options: ["Thomas Jefferson", "George Washington", "John Adams", "Benjamin Franklin"],
     correctAnswer: 1,
@@ -114,7 +106,6 @@ const questions = [
     points: 100
   },
   {
-    id: 13,
     question: "What year did the Titanic sink?",
     options: ["1910", "1911", "1912", "1913"],
     correctAnswer: 2,
@@ -123,7 +114,6 @@ const questions = [
     points: 200
   },
   {
-    id: 14,
     question: "Who wrote the Declaration of Independence?",
     options: ["George Washington", "John Adams", "Thomas Jefferson", "Benjamin Franklin"],
     correctAnswer: 2,
@@ -132,7 +122,6 @@ const questions = [
     points: 200
   },
   {
-    id: 15,
     question: "What ancient wonder was located in Alexandria?",
     options: ["Colossus", "Lighthouse", "Hanging Gardens", "Mausoleum"],
     correctAnswer: 1,
@@ -143,7 +132,6 @@ const questions = [
 
   // Technology Questions
   {
-    id: 16,
     question: "What does HTML stand for?",
     options: ["Hyper Text Markup Language", "High Tech Modern Language", "Home Tool Markup Language", "Hyperlinks and Text Markup Language"],
     correctAnswer: 0,
@@ -152,7 +140,6 @@ const questions = [
     points: 100
   },
   {
-    id: 17,
     question: "Who is the founder of Microsoft?",
     options: ["Steve Jobs", "Bill Gates", "Elon Musk", "Mark Zuckerberg"],
     correctAnswer: 1,
@@ -161,7 +148,6 @@ const questions = [
     points: 100
   },
   {
-    id: 18,
     question: "What year was the first iPhone released?",
     options: ["2005", "2006", "2007", "2008"],
     correctAnswer: 2,
@@ -170,7 +156,6 @@ const questions = [
     points: 200
   },
   {
-    id: 19,
     question: "What does CPU stand for?",
     options: ["Central Processing Unit", "Computer Personal Unit", "Central Processor Unit", "Central Programming Unit"],
     correctAnswer: 0,
@@ -179,7 +164,6 @@ const questions = [
     points: 100
   },
   {
-    id: 20,
     question: "Which programming language is known as the 'language of the web'?",
     options: ["Python", "Java", "JavaScript", "C++"],
     correctAnswer: 2,
@@ -190,7 +174,6 @@ const questions = [
 
   // Sports Questions
   {
-    id: 21,
     question: "How many players are on a soccer team?",
     options: ["9", "10", "11", "12"],
     correctAnswer: 2,
@@ -199,7 +182,6 @@ const questions = [
     points: 100
   },
   {
-    id: 22,
     question: "What sport is played at Wimbledon?",
     options: ["Golf", "Tennis", "Cricket", "Badminton"],
     correctAnswer: 1,
@@ -208,7 +190,6 @@ const questions = [
     points: 100
   },
   {
-    id: 23,
     question: "How many points is a touchdown worth in American football?",
     options: ["5", "6", "7", "8"],
     correctAnswer: 1,
@@ -217,7 +198,6 @@ const questions = [
     points: 200
   },
   {
-    id: 24,
     question: "What is the diameter of a basketball hoop in inches?",
     options: ["16", "18", "20", "22"],
     correctAnswer: 1,
@@ -226,7 +206,6 @@ const questions = [
     points: 300
   },
   {
-    id: 25,
     question: "Which country won the FIFA World Cup in 2018?",
     options: ["Germany", "Brazil", "France", "Argentina"],
     correctAnswer: 2,
@@ -238,52 +217,84 @@ const questions = [
 
 class QuestionBank {
   constructor() {
-    this.questions = questions;
-    this.usedQuestions = new Set();
+    // Initialize database connection
+    this.db = new GameDatabase();
+    this.db.init();
+
+    // Seed questions if database is empty
+    this.seedIfNeeded();
+
+    console.log('✓ QuestionBank initialized with database persistence');
+  }
+
+  // Seed questions into database if it's empty
+  seedIfNeeded() {
+    try {
+      const count = this.db.db.prepare('SELECT COUNT(*) as count FROM questions').get();
+
+      if (count.count === 0) {
+        console.log('Database is empty, seeding default questions...');
+        this.db.seedQuestions(defaultQuestions);
+        console.log(`✓ Seeded ${defaultQuestions.length} questions into database`);
+      }
+    } catch (error) {
+      console.error('Error checking/seeding questions:', error);
+    }
   }
 
   // Get a random set of questions for a game session
   getQuestions(count = 10, difficulty = null, category = null) {
-    let availableQuestions = [...this.questions];
-
-    // Filter by difficulty if specified
-    if (difficulty) {
-      availableQuestions = availableQuestions.filter(q => q.difficulty === difficulty);
+    try {
+      // Database now handles filtering and randomization!
+      return this.db.getQuestions(count, difficulty, category);
+    } catch (error) {
+      console.error('Error getting questions from database:', error);
+      // Graceful fallback: return empty array
+      return [];
     }
-
-    // Filter by category if specified
-    if (category) {
-      availableQuestions = availableQuestions.filter(q => q.category === category);
-    }
-
-    // Shuffle and select questions
-    const shuffled = this.shuffleArray(availableQuestions);
-    return shuffled.slice(0, Math.min(count, shuffled.length));
   }
 
   // Get a specific question by ID
   getQuestionById(id) {
-    return this.questions.find(q => q.id === id);
-  }
+    try {
+      const row = this.db.db.prepare('SELECT * FROM questions WHERE id = ?').get(id);
+      if (!row) return null;
 
-  // Shuffle array helper
-  shuffleArray(array) {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      return {
+        id: row.id,
+        question: row.question,
+        options: JSON.parse(row.options),
+        correctAnswer: row.correct_answer,
+        category: row.category,
+        difficulty: row.difficulty,
+        points: row.points
+      };
+    } catch (error) {
+      console.error('Error getting question by ID:', error);
+      return null;
     }
-    return newArray;
   }
 
   // Get all unique categories
   getCategories() {
-    return [...new Set(this.questions.map(q => q.category))];
+    try {
+      const rows = this.db.db.prepare('SELECT DISTINCT category FROM questions ORDER BY category').all();
+      return rows.map(row => row.category);
+    } catch (error) {
+      console.error('Error getting categories:', error);
+      return [];
+    }
   }
 
   // Get all difficulty levels
   getDifficulties() {
-    return [...new Set(this.questions.map(q => q.difficulty))];
+    try {
+      const rows = this.db.db.prepare('SELECT DISTINCT difficulty FROM questions ORDER BY difficulty').all();
+      return rows.map(row => row.difficulty);
+    } catch (error) {
+      console.error('Error getting difficulties:', error);
+      return ['easy', 'medium', 'hard']; // Fallback
+    }
   }
 
   // Calculate points based on answer time
