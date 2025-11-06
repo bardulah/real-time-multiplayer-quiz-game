@@ -137,3 +137,14 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Database files
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Backup files
+*.backup
+public/js/app.js.backup

@@ -21,7 +21,7 @@ class GameManager {
   }
 
   // Join an existing game
-  joinGame(gameId, playerId, playerName) {
+  joinGame(gameId, playerId, playerName, avatar) {
     const game = this.games.get(gameId);
     if (!game) {
       return { success: false, error: 'Game not found' };
@@ -35,7 +35,7 @@ class GameManager {
       return { success: false, error: 'Game is full' };
     }
 
-    game.addPlayer(playerId, playerName);
+    game.addPlayer(playerId, playerName, avatar);
     this.playerToGame.set(playerId, gameId);
     return { success: true, game };
   }
@@ -81,6 +81,7 @@ class Game {
     this.questions = [];
     this.questionStartTime = null;
     this.questionTimer = null;
+    this.chatMessages = []; // Store chat messages
 
     // Game settings
     this.maxPlayers = settings.maxPlayers || 10;
@@ -91,10 +92,11 @@ class Game {
   }
 
   // Add a player to the game
-  addPlayer(playerId, playerName) {
+  addPlayer(playerId, playerName, avatar = '👤') {
     const player = {
       id: playerId,
       name: playerName,
+      avatar: avatar,
       score: 0,
       answers: [],
       isReady: false,
@@ -240,9 +242,12 @@ class Game {
       state: this.state,
       playerCount: this.players.size,
       maxPlayers: this.maxPlayers,
+      category: this.category,
+      difficulty: this.difficulty,
       players: Array.from(this.players.values()).map(p => ({
         id: p.id,
         name: p.name,
+        avatar: p.avatar,
         isReady: p.isReady
       }))
     };
@@ -253,9 +258,41 @@ class Game {
     return Array.from(this.players.values()).map(p => ({
       id: p.id,
       name: p.name,
+      avatar: p.avatar,
       score: p.score,
       isConnected: p.isConnected
     }));
+  }
+
+  // Add chat message
+  addChatMessage(playerId, message) {
+    const player = this.players.get(playerId);
+    if (!player) {
+      return { success: false, error: 'Player not found' };
+    }
+
+    const chatMessage = {
+      id: Date.now(),
+      playerId: player.id,
+      playerName: player.name,
+      avatar: player.avatar,
+      message: message,
+      timestamp: new Date().toISOString()
+    };
+
+    this.chatMessages.push(chatMessage);
+
+    // Keep only last 100 messages
+    if (this.chatMessages.length > 100) {
+      this.chatMessages = this.chatMessages.slice(-100);
+    }
+
+    return { success: true, chatMessage };
+  }
+
+  // Get chat messages
+  getChatMessages() {
+    return this.chatMessages;
   }
 
   // Check if all players have answered

@@ -8,6 +8,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- Sound Toggle Button -->
+  <button id="soundToggle" class="sound-toggle" title="Toggle Sound">
+    <span id="soundIcon">🔊</span>
+  </button>
+
+  <!-- Stats Button -->
+  <button id="statsToggle" class="stats-toggle" title="View Statistics">
+    📊
+  </button>
+
   <div class="container">
     <!-- Welcome Screen -->
     <div id="welcomeScreen" class="screen active">
@@ -17,6 +27,37 @@
 
         <div class="welcome-form">
           <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="20" />
+
+          <!-- Avatar Selection -->
+          <div class="avatar-selection">
+            <label>Choose your avatar:</label>
+            <div class="avatar-grid" id="avatarGrid"></div>
+          </div>
+
+          <!-- Game Settings (for Create Game) -->
+          <div id="gameSettings" class="game-settings hidden">
+            <h3>Game Settings</h3>
+            <div class="settings-group">
+              <label for="categorySelect">Category:</label>
+              <select id="categorySelect">
+                <option value="">All Categories (Mixed)</option>
+                <option value="Science">Science</option>
+                <option value="Geography">Geography</option>
+                <option value="History">History</option>
+                <option value="Technology">Technology</option>
+                <option value="Sports">Sports</option>
+              </select>
+            </div>
+            <div class="settings-group">
+              <label for="difficultySelect">Difficulty:</label>
+              <select id="difficultySelect">
+                <option value="">All Difficulties (Mixed)</option>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+          </div>
 
           <div class="button-group">
             <button id="createGameBtn" class="btn btn-primary">Create New Game</button>
@@ -38,12 +79,24 @@
         <h2>Game Lobby</h2>
         <div class="game-info">
           <p>Game ID: <span id="gameIdDisplay" class="game-id-badge"></span></p>
+          <p id="gameSettingsDisplay" class="game-settings-display"></p>
           <p>Players: <span id="playerCount">0</span></p>
         </div>
 
-        <div class="players-list">
-          <h3>Players in Lobby:</h3>
-          <ul id="playersList"></ul>
+        <div class="lobby-container">
+          <div class="players-section">
+            <h3>Players in Lobby:</h3>
+            <ul id="playersList"></ul>
+          </div>
+
+          <div class="chat-section">
+            <h3>Chat</h3>
+            <div id="lobbyChatMessages" class="chat-messages"></div>
+            <div class="chat-input-container">
+              <input type="text" id="lobbyChatInput" placeholder="Type a message..." maxlength="200" />
+              <button id="lobbyChatSend" class="btn btn-small">Send</button>
+            </div>
+          </div>
         </div>
 
         <div class="lobby-actions">
@@ -55,33 +108,48 @@
 
     <!-- Game Screen -->
     <div id="gameScreen" class="screen">
-      <div class="game-header">
-        <div class="question-progress">
-          <span id="questionNumber">1</span>/<span id="totalQuestions">10</span>
-        </div>
-        <div class="timer-container">
-          <div id="timerBar" class="timer-bar"></div>
-          <span id="timerText" class="timer-text">15s</span>
-        </div>
-        <div class="player-score">
-          Score: <span id="playerScore">0</span>
-        </div>
-      </div>
+      <div class="game-layout">
+        <div class="game-main">
+          <div class="game-header">
+            <div class="question-progress">
+              <span id="questionNumber">1</span>/<span id="totalQuestions">10</span>
+            </div>
+            <div class="timer-container">
+              <div id="timerBar" class="timer-bar"></div>
+              <span id="timerText" class="timer-text">15s</span>
+            </div>
+            <div class="player-score">
+              Score: <span id="playerScore">0</span>
+            </div>
+          </div>
 
-      <div class="question-container">
-        <div class="question-meta">
-          <span id="questionCategory" class="category-badge"></span>
-          <span id="questionDifficulty" class="difficulty-badge"></span>
-          <span id="questionPoints" class="points-badge"></span>
-        </div>
-        <h2 id="questionText" class="question-text"></h2>
-        <div id="optionsContainer" class="options-container"></div>
-        <div id="feedbackMessage" class="feedback-message"></div>
-      </div>
+          <div class="question-container">
+            <div class="question-meta">
+              <span id="questionCategory" class="category-badge"></span>
+              <span id="questionDifficulty" class="difficulty-badge"></span>
+              <span id="questionPoints" class="points-badge"></span>
+            </div>
+            <h2 id="questionText" class="question-text"></h2>
+            <div id="optionsContainer" class="options-container"></div>
+            <div id="feedbackMessage" class="feedback-message"></div>
+          </div>
 
-      <div class="mini-leaderboard">
-        <h3>Live Leaderboard</h3>
-        <div id="miniLeaderboard"></div>
+          <div class="mini-leaderboard">
+            <h3>Live Leaderboard</h3>
+            <div id="miniLeaderboard"></div>
+          </div>
+        </div>
+
+        <div class="game-sidebar">
+          <div class="chat-panel">
+            <h3>Chat</h3>
+            <div id="gameChatMessages" class="chat-messages"></div>
+            <div class="chat-input-container">
+              <input type="text" id="gameChatInput" placeholder="Type a message..." maxlength="200" />
+              <button id="gameChatSend" class="btn btn-small">Send</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -97,8 +165,19 @@
           <div id="finalLeaderboard"></div>
         </div>
 
+        <div id="playerStatsDisplay" class="player-stats-display"></div>
+
         <button id="playAgainBtn" class="btn btn-primary">Play Again</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Statistics Modal -->
+  <div id="statsModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="modal-close" id="statsModalClose">&times;</span>
+      <h2>Your Statistics</h2>
+      <div id="statsContent" class="stats-content"></div>
     </div>
   </div>
 
@@ -107,6 +186,7 @@
 
   <!-- Socket.io Client -->
   <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/soundManager.js"></script>
   <script src="/js/app.js"></script>
 </body>
 </html>

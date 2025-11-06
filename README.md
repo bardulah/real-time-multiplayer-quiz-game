@@ -1,6 +1,6 @@
 # 🎮 Real-Time Multiplayer Quiz Game
 
-A competitive real-time quiz game where multiple players answer questions simultaneously, with live scoring, dynamic leaderboards, and instant feedback. Built with Node.js, Express, and Socket.io for seamless real-time multiplayer experience.
+A competitive real-time quiz game where multiple players answer questions simultaneously, with live scoring, dynamic leaderboards, real-time chat, player avatars, sound effects, and comprehensive statistics tracking. Built with Node.js, Express, and Socket.io for a seamless real-time multiplayer experience.
 
 ## ✨ Features
 
@@ -9,12 +9,13 @@ A competitive real-time quiz game where multiple players answer questions simult
 - **Live Updates**: Instant synchronization of game state across all players
 - **Game Rooms**: Create or join games with unique game IDs
 - **Player Lobby**: See who's in the game before it starts
+- **Player Avatars**: Choose from 24 different emoji avatars
 
 ### 🏆 Advanced Scoring System
 - **Speed-Based Bonus**: Faster answers earn up to 50% bonus points
 - **Difficulty Levels**: Easy (100 pts), Medium (200 pts), Hard (300 pts)
 - **Real-Time Score Updates**: Watch scores update instantly as players answer
-- **Live Leaderboard**: See your ranking change in real-time
+- **Live Leaderboard**: See your ranking change in real-time with avatars
 
 ### 📊 Question System
 - **25 Diverse Questions**: Covering 5 categories
@@ -23,9 +24,34 @@ A competitive real-time quiz game where multiple players answer questions simult
   - History
   - Technology
   - Sports
-- **Multiple Difficulty Levels**: Easy, Medium, and Hard questions
+- **Category Selection**: Host can choose specific category or mixed
+- **Difficulty Selection**: Choose easy, medium, hard, or mixed difficulty
 - **Random Selection**: Different question sets each game
 - **Timed Questions**: 15 seconds per question
+
+### 💬 Real-Time Chat
+- **Lobby Chat**: Chat with players while waiting for game to start
+- **In-Game Chat**: Continue chatting during gameplay
+- **Message History**: Scrollable chat with timestamps
+- **Player Avatars**: See who's talking with avatar icons
+
+### 📈 Statistics Tracking
+- **Persistent Stats**: Track performance across multiple games
+- **Win Rate**: See your wins vs total games played
+- **Accuracy**: Track percentage of correct answers
+- **Best Score**: Record your highest score ever
+- **Average Score**: Monitor your average performance
+- **Fastest Answer**: Track your quickest correct response
+- **Category Stats**: See which categories you play most
+- **Game History**: Review your last 10 games
+
+### 🔊 Sound Effects
+- **Game Events**: Audio feedback for joins, leaves, and game start
+- **Answer Feedback**: Different sounds for correct/incorrect answers
+- **Timer Warning**: Alert when time is running low
+- **Chat Notifications**: Sound when new messages arrive
+- **Victory Music**: Celebratory tune when game ends
+- **Toggle Control**: Mute/unmute with one click
 
 ### 🎨 Modern UI/UX
 - **Responsive Design**: Works on desktop, tablet, and mobile
@@ -33,6 +59,9 @@ A competitive real-time quiz game where multiple players answer questions simult
 - **Visual Feedback**: Color-coded correct/incorrect answers
 - **Progress Indicators**: Timer bar and question counter
 - **Toast Notifications**: Real-time game events
+- **Modal Statistics**: View detailed stats anytime
+- **Avatar Grid**: Interactive avatar selection interface
+- **Chat Interface**: Integrated messaging with auto-scroll
 
 ## 🚀 Quick Start
 
@@ -73,28 +102,61 @@ npm run dev
 
 ### Creating a Game
 1. Enter your name on the welcome screen
-2. Click "Create New Game"
-3. Share the generated Game ID with friends
-4. Wait for players to join in the lobby
-5. Click "Start Game" when ready
+2. **Choose your avatar** from 24 emoji options
+3. Click "Create New Game"
+4. **Optional**: Configure game settings
+   - Select a specific category (or keep mixed)
+   - Choose difficulty level (or keep mixed)
+5. Click "Confirm & Create" to finalize settings
+6. Share the generated Game ID with friends
+7. **Chat with players** as they join the lobby
+8. Click "Start Game" when ready
 
 ### Joining a Game
 1. Enter your name on the welcome screen
-2. Click "Join Game"
-3. Enter the Game ID provided by the host
-4. Wait in the lobby for the host to start
+2. **Choose your avatar** from the selection grid
+3. Click "Join Game"
+4. Enter the Game ID provided by the host
+5. Wait in the lobby and **chat with other players**
+6. Game starts when host clicks "Start Game"
 
 ### During Gameplay
 1. Read each question carefully
-2. Click your answer choice
-3. Faster correct answers earn more points
-4. Watch the live leaderboard update
-5. Compete to reach the top!
+2. Click your answer choice quickly (faster = more points!)
+3. **Hear sound effects** for correct/incorrect answers
+4. **Use the chat** to communicate with other players
+5. Watch the live leaderboard update with player avatars
+6. Timer bar changes color as time runs out (warning at 5 seconds)
+7. Compete to reach the top!
+
+### After the Game
+- View final leaderboard with rankings
+- **Check your updated statistics** (wins, accuracy, scores)
+- See your performance summary
+- Click "Play Again" to start a new game
+
+### Using Features
+
+#### Sound Effects
+- Click the **🔊 button** (top-right) to toggle sound on/off
+- Sounds play for: answers, chat, timer warnings, game events
+
+#### Statistics
+- Click the **📊 button** (top-right) to view your stats anytime
+- Stats include: total games, wins, win rate, accuracy, best score, and more
+- Statistics persist across multiple games
+
+#### Chat
+- Available in both lobby and during gameplay
+- Type message and press Enter or click Send
+- See player avatars and timestamps
+- Auto-scrolls to latest messages
 
 ### Scoring
 - **Base Points**: Based on question difficulty (100-300 pts)
 - **Speed Bonus**: Up to 50% extra for fast answers
 - **Example**: Answer a 200-point question in 3 seconds → ~260 points!
+- **Strategy**: Balance speed with accuracy for maximum points
 
 ## 📁 Project Structure
 
@@ -103,13 +165,15 @@ real-time-multiplayer-quiz-game/
 ├── server/
 │   ├── index.js           # Main server with Socket.io
 │   ├── gameManager.js     # Game state and room management
-│   └── questionBank.js    # Question database and logic
+│   ├── questionBank.js    # Question database and logic
+│   └── statsTracker.js    # Statistics tracking system
 ├── public/
-│   ├── index.html         # Main HTML file
+│   ├── index.html         # Main HTML file with all features
 │   ├── css/
-│   │   └── style.css      # Styling and animations
+│   │   └── style.css      # Comprehensive styling and animations
 │   └── js/
-│       └── app.js         # Client-side game logic
+│       ├── app.js         # Client-side game logic
+│       └── soundManager.js # Sound effects manager (Web Audio API)
 ├── package.json           # Dependencies and scripts
 └── README.md             # This file
 ```
@@ -119,23 +183,29 @@ real-time-multiplayer-quiz-game/
 ### Backend
 - **Express**: Web server and static file serving
 - **Socket.io**: Real-time bidirectional communication
-- **Game Manager**: Handles game rooms, players, and state
-- **Question Bank**: 25 questions with multiple categories
+- **Game Manager**: Handles game rooms, players, state, and chat
+- **Question Bank**: 25 questions with category/difficulty filtering
+- **Stats Tracker**: Persistent player statistics across games
 
 ### Frontend
 - **Vanilla JavaScript**: No framework dependencies
 - **Socket.io Client**: Real-time server communication
+- **Web Audio API**: Programmatic sound effect generation
 - **CSS Grid & Flexbox**: Responsive layout
 - **Custom Animations**: Smooth transitions and feedback
+- **Modal System**: Statistics and settings overlays
 
 ### Real-Time Events
-- `createGame`: Host creates a new game room
-- `joinGame`: Player joins existing game
+- `createGame`: Host creates a new game room with settings
+- `joinGame`: Player joins existing game with avatar
 - `startGame`: Host starts the quiz
 - `submitAnswer`: Player submits an answer
 - `newQuestion`: Server sends next question
-- `leaderboardUpdate`: Real-time score updates
-- `gameEnded`: Final results and winner
+- `leaderboardUpdate`: Real-time score updates with avatars
+- `chatMessage`: Real-time chat messages
+- `gameEnded`: Final results, winner, and stats update
+- `getStats`: Request player statistics
+- `statsUpdated`: Receive updated statistics
 
 ## 🎯 Game Mechanics
 
@@ -251,27 +321,42 @@ npm start
 
 MIT License - feel free to use this project for learning and development!
 
+## ✅ Recently Implemented Features
+
+These features have been added in the latest version:
+- [x] **Question categories selection** - Host can filter by category
+- [x] **Difficulty level selection** - Choose easy, medium, hard, or mixed
+- [x] **Player avatars** - 24 emoji avatars to choose from
+- [x] **Sound effects** - Web Audio API-powered sound feedback
+- [x] **Chat functionality** - Real-time messaging in lobby and game
+- [x] **Statistics tracking** - Persistent stats across games
+
 ## 🎉 Future Enhancements
 
 Potential features to add:
-- [ ] Question categories selection
-- [ ] Difficulty level selection
-- [ ] Custom question sets
-- [ ] Player avatars
-- [ ] Sound effects
-- [ ] Chat functionality
-- [ ] Game replay
-- [ ] Statistics tracking
-- [ ] Achievement system
-- [ ] Power-ups and bonuses
+- [ ] Custom question sets - Upload your own questions
+- [ ] Game replay - Review past games move-by-move
+- [ ] Achievement system - Unlock badges and rewards
+- [ ] Power-ups and bonuses - Special abilities during gameplay
+- [ ] Team mode - Compete in teams
+- [ ] Tournament brackets - Multi-round competitions
+- [ ] Custom themes - Personalize the UI appearance
+- [ ] Question editor - In-game question management
+- [ ] Private rooms - Password-protected games
+- [ ] Spectator mode - Watch games without playing
 
 ## 💡 Tips for Best Experience
 
-1. **Stable Connection**: Use a reliable internet connection
-2. **Modern Browser**: Chrome, Firefox, Safari, or Edge (latest versions)
-3. **Multiple Players**: More players = more fun!
-4. **Quick Answers**: Speed matters for bonus points
-5. **Read Carefully**: Some questions are tricky!
+1. **Stable Connection**: Use a reliable internet connection for smooth real-time updates
+2. **Modern Browser**: Chrome, Firefox, Safari, or Edge (latest versions) for best compatibility
+3. **Enable Sound**: Turn on sound effects for better feedback and immersion
+4. **Choose Your Avatar**: Pick an avatar that represents you before joining
+5. **Use Chat**: Communicate with other players for a more social experience
+6. **Multiple Players**: More players = more competitive and fun!
+7. **Quick Answers**: Speed matters for bonus points - be fast but accurate
+8. **Check Stats**: Review your statistics to track improvement over time
+9. **Read Carefully**: Some questions are tricky - accuracy counts!
+10. **Category Selection**: Host can choose specific categories for themed games
 
 ---
 

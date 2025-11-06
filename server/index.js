@@ -3,6 +3,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
 const GameManager = require('./gameManager');
+const StatsTracker = require('./statsTracker');
 
 const app = express();
 const server = http.createServer(app);
@@ -10,6 +11,7 @@ const io = socketIo(server);
 
 const PORT = process.env.PORT || 3000;
 const gameManager = new GameManager();
+const statsTracker = new StatsTracker();
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, '../public')));
@@ -19,10 +21,10 @@ io.on('connection', (socket) => {
   console.log(`Player connected: ${socket.id}`);
 
   // Create a new game room
-  socket.on('createGame', ({ playerName, settings }) => {
+  socket.on('createGame', ({ playerName, avatar, settings }) => {
     const gameId = generateGameId();
     const game = gameManager.createGame(gameId, socket.id, settings);
-    game.addPlayer(socket.id, playerName);
+    game.addPlayer(socket.id, playerName, avatar);
 
     socket.join(gameId);
     socket.emit('gameCreated', {
@@ -35,8 +37,8 @@ io.on('connection', (socket) => {
   });
 
   // Join an existing game
-  socket.on('joinGame', ({ gameId, playerName }) => {
-    const result = gameManager.joinGame(gameId, socket.id, playerName);
+  socket.on('joinGame', ({ gameId, playerName, avatar }) => {
+    const result = gameManager.joinGame(gameId, socket.id, playerName, avatar);
 
     if (result.success) {
       socket.join(gameId);
@@ -48,7 +50,7 @@ io.on('connection', (socket) => {
 
       // Notify all players in the room
       io.to(gameId).emit('playerJoined', {
-        player: { id: socket.id, name: playerName },
+        player: { id: socket.id, name: playerName, avatar: avatar },
         players: result.game.getPlayers()
       });
 
@@ -173,6 +175,36 @@ io.on('connection', (socket) => {
       games: gameManager.getActiveGames()
     });
   });
+
+  // Chat message
+  socket.on('chatMessage', ({ gameId, message }) => {
+    const game = gameManager.getGame(gameId);
+
+    if (!game) {
+      socket.emit('error', { message: 'Game not found' });
+      return;
+    }
+
+    const result = game.addChatMessage(socket.id, message);
+
+    if (result.success) {
+      io.to(gameId).emit('chatMessage', result.chatMessage);
+    } else {
+      socket.emit('error', { message: result.error });
+    }
+  });
+
+  // Get player stats
+  socket.on('getStats', ({ playerId }) => {
+    const stats = statsTracker.getPlayerStats(playerId || socket.id, 'Player');
+    socket.emit('playerStats', { stats });
+  });
+
+  // Get global leaderboard
+  socket.on('getGlobalLeaderboard', ({ metric, limit }) => {
+    const leaderboard = statsTracker.getTopPlayers(metric || 'totalScore', limit || 10);
+    socket.emit('globalLeaderboard', { leaderboard });
+  });
 });
 
 // Helper function to send the next question to all players
@@ -215,6 +247,17 @@ function endGame(gameId) {
 
   const results = game.getFinalResults();
 
+  // Update statistics for all players
+  game.players.forEach((player, playerId) => {
+    const gameResult = statsTracker.calculateGameResult(game, playerId);
+    if (gameResult) {
+      const updatedStats = statsTracker.updateGameStats(playerId, player.name, gameResult);
+
+      // Send updated stats to the player
+      io.to(playerId).emit('statsUpdated', { stats: updatedStats });
+    }
+  });
+
   io.to(gameId).emit('gameEnded', results);
 
   console.log(`Game ended: ${gameId}`);
@@ -237,7 +280,10 @@ server.listen(PORT, () => {
 ║   Features:                                                ║
 ║   ✓ Real-time multiplayer gameplay                        ║
 ║   ✓ Live scoring and leaderboards                         ║
-║   ✓ Multiple question categories                          ║
+║   ✓ Category & difficulty selection                       ║
+║   ✓ Player avatars                                         ║
+║   ✓ Real-time chat                                         ║
+║   ✓ Statistics tracking                                    ║
 ║   ✓ Speed-based bonus points                              ║
 ║                                                            ║
 ╚════════════════════════════════════════════════════════════╝
